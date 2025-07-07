@@ -9,9 +9,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
-// Set of Material typography styles to start with
 val Typography = Typography(
-    // "Design is not how a thing looks..."
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
@@ -20,7 +18,6 @@ val Typography = Typography(
         letterSpacing = 0.sp,
         textAlign = TextAlign.Center
     ),
-    // "KEY POINT 2 OF 10"
     labelMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Bold,

@@ -17,7 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.alterjuice.test.audiobook.domain.model.Chapter
 import com.alterjuice.test.audiobook.ui.components.HorizontallyAnimatedContent
-import com.alterjuice.test.audiobook.ui.theme.customScheme
 
 
 @Composable
@@ -40,7 +39,6 @@ internal fun ChapterInfo(
                     "KEY POINT ${currentChapter.order.plus(1)} OF $totalChapters".uppercase()
                 },
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.customScheme.PlayerTextSecondary
             )
         }
         HorizontallyAnimatedContent(
@@ -55,7 +53,6 @@ internal fun ChapterInfo(
                     .wrapContentHeight(),
                 text = localCurrentChapter?.title ?: "",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.customScheme.PlayerTextPrimary,
                 textAlign = TextAlign.Center,
                 minLines = 1
             )
