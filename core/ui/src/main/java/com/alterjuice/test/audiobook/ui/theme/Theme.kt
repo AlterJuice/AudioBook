@@ -1,6 +1,5 @@
 package com.alterjuice.test.audiobook.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -12,15 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = MaterialTheme.customScheme.PlayerBlue,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = MaterialTheme.customScheme.PlayerBlue,
+    background = MaterialTheme.customScheme.PlayerBackground
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

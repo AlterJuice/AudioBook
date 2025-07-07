@@ -24,5 +24,6 @@ dependencyResolutionManagement {
 rootProject.name = "Audio Book"
 include(":app")
 include(":feature:book-player")
+include(":core:ui")
 include(":domain")
 include(":data")
