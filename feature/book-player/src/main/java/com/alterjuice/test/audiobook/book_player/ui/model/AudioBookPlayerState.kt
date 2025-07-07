@@ -1,4 +1,4 @@
-package com.alterjuice.test.audiobook.book_player.model
+package com.alterjuice.test.audiobook.book_player.ui.model
 
 import androidx.compose.runtime.Immutable
 import com.alterjuice.test.audiobook.domain.model.Book

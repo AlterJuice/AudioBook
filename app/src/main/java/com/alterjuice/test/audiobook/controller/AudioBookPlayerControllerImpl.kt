@@ -8,7 +8,7 @@ import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.alterjuice.test.audiobook.book_player.model.AudioBookPlayerController
-import com.alterjuice.test.audiobook.book_player.model.AudioBookPlayerState
+import com.alterjuice.test.audiobook.book_player.ui.model.AudioBookPlayerState
 import com.alterjuice.test.audiobook.book_player.utils.toSortedMediaItems
 import com.alterjuice.test.audiobook.domain.model.Book
 import com.alterjuice.test.audiobook.service.AudioBookPlayerService

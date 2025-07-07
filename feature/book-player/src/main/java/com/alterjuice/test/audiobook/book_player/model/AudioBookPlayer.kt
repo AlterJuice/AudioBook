@@ -1,5 +1,6 @@
 package com.alterjuice.test.audiobook.book_player.model
 
+import com.alterjuice.test.audiobook.book_player.ui.model.AudioBookPlayerState
 import com.alterjuice.test.audiobook.domain.model.Book
 import kotlinx.coroutines.flow.Flow
 
@@ -35,7 +36,7 @@ interface AudioBookPlayerController :
  */
 interface AudioBookStateHolder {
     /**
-     * A [Flow] of [AudioBookPlayerState] representing the player's state changes.
+     * A [Flow] of [com.alterjuice.test.audiobook.book_player.ui.model.AudioBookPlayerState] representing the player's state changes.
      */
     val playerState: Flow<AudioBookPlayerState>
 }
