@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.kotlinx.collections.immutable)
 
     // Project modules
+    implementation(project(":feature:book-player"))
     implementation(project(":core:ui"))
     implementation(project(":domain"))
     implementation(project(":data"))
