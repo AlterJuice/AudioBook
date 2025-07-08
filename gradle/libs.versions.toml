@@ -23,7 +23,7 @@ jetbrainsKotlinJvm = "1.9.24"
 appcompat = "1.7.0"
 material = "1.12.0"
 uiTooling = "1.8.2"
-kotlinxCoroutinesCore = "1.10.1"
+kotlinxCoroutinesCore = "1.10.2"
 str = "1.0.15"
 mockk = "1.13.11"
 kotlinxCoroutinesTest = "1.8.1"
@@ -49,6 +49,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
