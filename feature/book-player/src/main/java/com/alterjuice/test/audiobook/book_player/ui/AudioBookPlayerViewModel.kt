@@ -56,7 +56,11 @@ class AudioBookPlayerViewModel @Inject constructor (
 
     private fun loadBookData() {
         viewModelScope.launch {
-            val result = getBookUseCase("wizard_of_oz")
+            val bookId = "wizard_of_oz"
+            if (audioPlayer.isBookLoaded(bookId)) {
+                return@launch
+            }
+            val result = getBookUseCase(bookId)
             result.onSuccess { book ->
                 audioPlayer.loadBook(book)
             }.onFailure { error ->

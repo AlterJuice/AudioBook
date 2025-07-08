@@ -6,6 +6,9 @@ import javax.inject.Inject
 
 internal class BookApiServiceTestMock @Inject constructor(): BookApiService {
     override suspend fun getBookById(id: String): BookDto {
-        return WizardOfOzData
+        // return test book with the same requested [id]
+        return WizardOfOzData.copy(
+            id = id
+        )
     }
 }

@@ -105,6 +105,10 @@ class AudioBookPlayerControllerImpl @Inject constructor(
         bookLoaderJob.restart(scope, Dispatchers.Main, value = book)
     }
 
+    override fun isBookLoaded(bookId: String): Boolean {
+        return playerState.value.book?.id == bookId
+    }
+
     override fun play() {
         mediaController?.play()
     }
