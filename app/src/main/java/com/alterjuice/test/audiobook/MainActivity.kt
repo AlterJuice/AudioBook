@@ -19,11 +19,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AudioBookTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AudioBookPlayerScreen(
-                        modifier = Modifier.fillMaxSize().padding(innerPadding),
-                    )
-                }
+                AudioBookPlayerScreen(
+                    modifier = Modifier.fillMaxSize(),
+                )
             }
         }
     }

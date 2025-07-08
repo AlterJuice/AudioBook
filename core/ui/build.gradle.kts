@@ -53,6 +53,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.1")
     debugImplementation(libs.androidx.ui.tooling.preview)
 
+    // Str lib
+    implementation(libs.alterjuice.str.core)
+    implementation(libs.alterjuice.str.android)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

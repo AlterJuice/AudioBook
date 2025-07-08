@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Audio Book</string>
+
+    <string name="unknown_error_args">An error occurred: %1$s</string>
+    <string name="unknown_error">An error occurred</string>
+    <string name="global_error_no_internet_connection">No internet connection</string>
+    <string name="global_error_playback">Playback error: %s</string>
+    <string name="global_error_bad_internet_connection">Bad internet connection</string>
+    <string name="server_error">Server error</string>
+
 </resources>

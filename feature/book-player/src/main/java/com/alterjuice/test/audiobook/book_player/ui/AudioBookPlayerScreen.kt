@@ -1,7 +1,6 @@
 package com.alterjuice.test.audiobook.book_player.ui
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -24,8 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.alterjuice.test.audiobook.book_player.ui.model.AudioBookPlayerState
-import com.alterjuice.test.audiobook.book_player.ui.model.AudioPlayerContents
+import com.alterjuice.test.audiobook.book_player.BuildConfig
 import com.alterjuice.test.audiobook.book_player.ui.components.AudioPlaybackControls
 import com.alterjuice.test.audiobook.book_player.ui.components.AudioPlayerSlider
 import com.alterjuice.test.audiobook.book_player.ui.components.BookCover
@@ -33,9 +33,12 @@ import com.alterjuice.test.audiobook.book_player.ui.components.ChapterInfo
 import com.alterjuice.test.audiobook.book_player.ui.components.ChapterSelectionBottomSheet
 import com.alterjuice.test.audiobook.book_player.ui.components.SpeedButton
 import com.alterjuice.test.audiobook.book_player.ui.components.SpeedSelectionBottomSheet
+import com.alterjuice.test.audiobook.book_player.ui.model.AudioBookPlayerState
+import com.alterjuice.test.audiobook.book_player.ui.model.AudioPlayerContents
 import com.alterjuice.test.audiobook.book_player.ui.model.PlayerEvent
 import com.alterjuice.test.audiobook.book_player.ui.model.PlayerSideEffects
 import com.alterjuice.test.audiobook.ui.components.HorizontallyAnimatedContent
+import com.alterjuice.test.audiobook.ui.components.rememberSnackbarEffectHandler
 import com.alterjuice.test.audiobook.ui.components.rememberVisibilityEffectHandler
 import com.alterjuice.test.audiobook.ui.utils.BaseSideEffect
 import com.alterjuice.test.audiobook.ui.utils.EffectsCollector
@@ -77,32 +80,30 @@ fun AudioBookPlayerScreen(
         initialValue = false,
         isVisible = PlayerSideEffects.UpdateChapterPicker::isVisible,
     )
+    val snackbarHostState = remember { SnackbarHostState() }
+    val snackbarMessageEffectHandler = rememberSnackbarEffectHandler(snackbarHostState)
 
     EffectsCollector(
         effects,
         speedPickerHandler,
         chapterPickerHandler,
-        strategy = UnhandledEffectStrategyThrowException
+        snackbarMessageEffectHandler,
+        strategy = if (BuildConfig.DEBUG) UnhandledEffectStrategyThrowException else UnhandledEffectStrategyThrowException
     )
 
-    Surface(
-        modifier = modifier.verticalScroll(rememberScrollState()),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        val contentModifier = Modifier.fillMaxSize()
+    Scaffold(
+        modifier = modifier,
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { padding ->
         HorizontallyAnimatedContent(
-            modifier = contentModifier,
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(padding),
             targetState = contentState.value,
             stateToOrderIndex = { availableContentScales.indexOf(it) },
             contentAlignment = Alignment.Center,
         ) { target ->
             when (target) {
                 AudioPlayerContents.TEXT -> {
-                    AudioBookPlayerControlsContent(
-                        modifier = Modifier.fillMaxSize(),
-                        playerState = playerState,
-                        onEvent = onEvent
-                    )
+                    /* Skip Implementation of Text tab since main task was to recreate player-screen */
                 }
 
                 AudioPlayerContents.AUDIO_CONTROLS -> {

@@ -68,11 +68,17 @@ dependencies {
     // Immutable collections
     implementation(libs.kotlinx.collections.immutable)
 
+    // Str lib
+    implementation(libs.alterjuice.str.core)
+    implementation(libs.alterjuice.str.android)
+
     // Project modules
     implementation(project(":feature:book-player"))
     implementation(project(":core:ui"))
     implementation(project(":domain"))
     implementation(project(":data"))
+    implementation(project(":errors"))
+    implementation(project(":core:utils"))
 
 
     // Testing

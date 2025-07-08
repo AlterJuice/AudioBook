@@ -81,6 +81,8 @@ dependencies {
     // Project modules
     implementation(project(":core:ui"))
     implementation(project(":domain"))
+    implementation(project(":errors"))
+    implementation(project(":core:utils"))
 
     // Testing
     testImplementation(libs.test.mockk)

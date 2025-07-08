@@ -2,6 +2,7 @@ package com.alterjuice.test.audiobook.book_player.model
 
 import com.alterjuice.test.audiobook.book_player.ui.model.AudioBookPlayerState
 import com.alterjuice.test.audiobook.domain.model.Book
+import com.alterjuice.test.audiobook.errors.AppError
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -28,7 +29,8 @@ interface AudioBookPlayerController :
     AudioBookChapterController,
     AudioBookSkipController,
     AudioBookLoader,
-    AudioBookResourceReleaser
+    AudioBookResourceReleaser,
+    AudioBookPlayerErrorHandler
 
 
 /**
@@ -61,6 +63,10 @@ interface AudioBookLoader {
      * @param book The [Book] to be loaded into the player.
      */
     fun loadBook(book: Book)
+}
+
+interface AudioBookPlayerErrorHandler {
+    val error: Flow<AppError>
 }
 
 /**
