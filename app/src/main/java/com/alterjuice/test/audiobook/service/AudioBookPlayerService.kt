@@ -48,11 +48,15 @@ class AudioBookPlayerService : MediaSessionService() {
     }
 
     private fun getSingleTopActivity(): PendingIntent {
+        val activityIntent = Intent(this, MainActivity::class.java).apply {
+            // Flags for return activity if it already exists
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
         return PendingIntent.getActivity(
             this,
             0,
-            Intent(this, MainActivity::class.java),
-            PendingIntent.FLAG_IMMUTABLE
+            activityIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
 }
