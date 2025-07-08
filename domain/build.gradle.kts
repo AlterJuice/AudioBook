@@ -18,4 +18,10 @@ dependencies {
 
     // Immutable collections
     implementation(libs.kotlinx.collections.immutable)
+
+    // Testing
+    testImplementation(libs.junit)
+    testImplementation(libs.test.mockk)
+    testImplementation(libs.test.coroutines)
+    testImplementation(kotlin("test"))
 }
