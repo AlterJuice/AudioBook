@@ -63,7 +63,7 @@ interface AudioBookLoader {
      * @param book The [Book] to be loaded into the player.
      */
     fun loadBook(book: Book)
-    fun isBookLoaded(bookId: String): Boolean
+    suspend fun isBookLoaded(bookId: String): Boolean
 }
 
 interface AudioBookPlayerErrorHandler {

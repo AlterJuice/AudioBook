@@ -26,7 +26,7 @@ class FakeAudioBookPlayerController : AudioBookPlayerController {
         _playerState.value = _playerState.value.copy(book = book)
     }
 
-    override fun isBookLoaded(bookId: String): Boolean {
+    override suspend fun isBookLoaded(bookId: String): Boolean {
         return _playerState.value.book?.id == bookId
     }
 

@@ -105,8 +105,9 @@ class AudioBookPlayerControllerImpl @Inject constructor(
         bookLoaderJob.restart(scope, Dispatchers.Main, value = book)
     }
 
-    override fun isBookLoaded(bookId: String): Boolean {
-        return playerState.value.book?.id == bookId
+    override suspend fun isBookLoaded(bookId: String): Boolean {
+        val controller = controllerFuture.await()
+        return controller.mediaItemCount > 0 && playerState.value.book?.id == bookId
     }
 
     override fun play() {
@@ -119,7 +120,6 @@ class AudioBookPlayerControllerImpl @Inject constructor(
 
 
     private fun updateState() {
-        mediaController?.currentMediaItem?.mediaMetadata?.displayTitle
         _playerState.update {
             it.copy(
                 isPlaying = mediaController?.isPlaying ?: false,
