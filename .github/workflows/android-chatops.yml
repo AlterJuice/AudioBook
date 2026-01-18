@@ -1,0 +1,96 @@
+name: 🤖 Android ChatOps
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'Command'
+        required: true
+        type: choice
+        options: [/run-checks, /deploy-qa, /deploy-release]
+
+permissions:
+  contents: write
+  pull-requests: write
+  statuses: write
+  deployments: write
+
+jobs:
+  authorize:
+    if: >-
+      github.event_name == 'workflow_dispatch' || 
+      (github.event.issue.pull_request && startsWith(github.event.comment.body, '/'))
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.resolve-git.outputs.sha }}
+      branch: ${{ steps.resolve-git.outputs.branch }}
+      command: ${{ steps.parse-command.outputs.command }}
+    steps:
+      - id: parse-command
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            INPUT="${{ github.event.inputs.command }}"
+          else
+            INPUT="${{ github.event.comment.body }}"
+          fi
+
+          CMD=$(echo "$INPUT" | grep -oiP '^\/[a-z0-9-]+' | head -n 1 | tr '[:upper:]' '[:lower:]')
+          
+          ALLOWED="/run-checks /deploy-qa /deploy-release"
+          
+          if [[ $ALLOWED =~ (^|[[:space:]])"$CMD"($|[[:space:]]) ]]; then
+            echo "command=$CMD" >> $GITHUB_OUTPUT
+            echo "✅ Valid command: $CMD"
+          else
+            echo "command=" >> $GITHUB_OUTPUT
+            echo "⚠️ Unknown command: $CMD. Workflow will stop here."
+            exit 0
+          fi
+
+      - id: resolve-git
+        if: steps.parse-command.outputs.command != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "${{ github.event_name }}" == "issue_comment" ]]; then
+            PR_DATA=$(gh pr view ${{ github.event.issue.number }} --repo ${{ github.repository }} --json headRefOid,headRefName -q '.')
+            echo "sha=$(echo $PR_DATA | jq -r .headRefOid)" >> $GITHUB_OUTPUT
+            echo "branch=$(echo $PR_DATA | jq -r .headRefName)" >> $GITHUB_OUTPUT
+          else
+            echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          fi
+
+  reply-to-comment:
+    needs: authorize
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issue_comment' && needs.authorize.outputs.command != ''
+    steps:
+      - name: Add reaction and reply
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          reactions: 'rocket'
+          body: |
+            > [!NOTE]
+            > [Запущено](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}): `${{ needs.authorize.outputs.command }}` на гілці `${{ needs.authorize.outputs.branch }}`.
+            > SHA: `${{ needs.authorize.outputs.sha }}`            
+
+  slash-run-checks:
+    needs: authorize
+    if: needs.authorize.outputs.command == '/run-checks'
+    uses: ./.github/workflows/code-quality-checks.yml
+    with:
+      sha: ${{ needs.authorize.outputs.sha }}
+      branch_name: ${{ needs.authorize.outputs.branch }}
+
+  slash-deploy-qa:
+    needs: authorize
+    if: needs.authorize.outputs.command == '/deploy-qa'
+    uses: ./.github/workflows/deploy.yml
+    with:
+      target: 'debug'
+      sha: ${{ needs.authorize.outputs.sha }}
+      branch_name: ${{ needs.authorize.outputs.branch }}
