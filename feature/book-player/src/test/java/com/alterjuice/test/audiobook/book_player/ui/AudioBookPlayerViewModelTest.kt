@@ -5,6 +5,7 @@ import com.alterjuice.test.audiobook.book_player.FakeAudioBookPlayerController
 import com.alterjuice.test.audiobook.book_player.ui.model.PlayerEvent
 import com.alterjuice.test.audiobook.book_player.ui.model.PlayerSideEffects
 import com.alterjuice.test.audiobook.domain.usecase.GetBookUseCase
+import com.alterjuice.test.audiobook.errors.RootAppErrorMessagesProvider
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -14,9 +15,9 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AudioBookPlayerViewModelTest {
@@ -24,6 +25,7 @@ class AudioBookPlayerViewModelTest {
     private val testDispatcher = UnconfinedTestDispatcher()
 
     private val getBookUseCase: GetBookUseCase = mockk()
+    private val appErrorsHandler: RootAppErrorMessagesProvider = mockk()
 
     private lateinit var fakeAudioPlayer: FakeAudioBookPlayerController
 
@@ -33,7 +35,7 @@ class AudioBookPlayerViewModelTest {
 
 
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Set testing dispatcher before each test
         Dispatchers.setMain(testDispatcher)
@@ -44,11 +46,12 @@ class AudioBookPlayerViewModelTest {
         fakeAudioPlayer = FakeAudioBookPlayerController()
         viewModel = AudioBookPlayerViewModel(
             getBookUseCase = getBookUseCase,
-            audioPlayer = fakeAudioPlayer
+            audioPlayer = fakeAudioPlayer,
+            appErrorsHandler = appErrorsHandler,
         )
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
     }

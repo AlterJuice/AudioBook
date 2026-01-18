@@ -1,0 +1,67 @@
+name: 🚀 Android Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target'
+        required: true
+        default: 'debug'
+        type: choice
+        options: [debug, internal]
+  workflow_call:
+    inputs:
+      target:
+        required: true
+        type: string
+      sha:
+        required: true
+        type: string
+      branch_name:
+        type: string
+        required: false
+
+permissions:
+  contents: read        # Для чекауту коду
+  deployments: write    # КРИТИЧНО: дозволяє створювати GitHub Deployments (секція Environments у ПР)
+  pull-requests: write  # Якщо Fastlane або скрипти мають писати посилання на артефакти в коментарі
+  statuses: write       # Щоб оновити статус джоби (якщо деплой теж є статус-чеком)
+
+jobs:
+  build-and-deploy:
+    name: 🚀 Android Deploy [${{ inputs.target }}]
+    runs-on: ubuntu-latest
+    # Environment will show up in the PR under 'Deployments'
+    environment: ${{ inputs.target == 'internal' && 'Google-Play-Internal' || 'Firebase-Debug' }}
+    
+    steps:
+      - name: GitHub Deployments
+        uses: bobheadxi/deployments@v1.5.0
+        id: deployment
+        with:
+          step: start
+          token: ${{ github.token }}
+          env: ${{ inputs.target }}
+          ref: ${{ inputs.sha || github.sha }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha || github.ref }}
+
+      - name: Mock Deployment
+        run: |
+          echo "Deploying branch ${{ inputs.branch_name }} to ${{ inputs.target }}"
+          echo "Commit SHA: ${{ inputs.sha }}"
+          sleep 10
+          echo "Deployment successful! 🚀"
+
+      - name: Update Deployment Status
+        uses: bobheadxi/deployments@v1.5.0
+        if: always()
+        with:
+          step: finish
+          token: ${{ github.token }}
+          status: ${{ job.status }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env: ${{ steps.deployment.outputs.env }}

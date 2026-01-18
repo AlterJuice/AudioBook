@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -30,6 +32,28 @@ android {
         sourceCompatibility = ProjectConfig.javaVersion
         targetCompatibility = ProjectConfig.javaVersion
     }
+    testOptions {
+        unitTests {
+            all {
+                it.apply {
+                    useJUnitPlatform()
+                    testLogging {
+                        events =
+                            setOf(
+                                TestLogEvent.PASSED,
+                                TestLogEvent.SKIPPED,
+                                TestLogEvent.FAILED
+                            )
+                    }
+                    // Enable JUnit XML reports for CI integration (dorny/test-reporter)
+                    reports {
+                        junitXml.required.set(true)
+                        html.required.set(true)
+                    }
+                }
+            }
+        }
+    }
     kotlinOptions {
         jvmTarget = ProjectConfig.jvmVersion
     }
@@ -56,7 +80,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.runtime.android)
-    debugImplementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.ui.tooling.preview)
 
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.1")
@@ -89,8 +113,9 @@ dependencies {
     testImplementation(libs.test.coroutines)
     testImplementation(libs.turbine)
 
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(kotlin("test"))
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.bundles.testing.junit)
 }

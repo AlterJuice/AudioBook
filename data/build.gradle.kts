@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -26,6 +28,29 @@ android {
             )
         }
     }
+    testOptions {
+        unitTests {
+            all {
+                it.apply {
+                    useJUnitPlatform()
+                    testLogging {
+                        events =
+                            setOf(
+                                TestLogEvent.PASSED,
+                                TestLogEvent.SKIPPED,
+                                TestLogEvent.FAILED
+                            )
+                    }
+                    // Enable JUnit XML reports for CI integration (dorny/test-reporter)
+                    reports {
+                        junitXml.required.set(true)
+                        html.required.set(true)
+                    }
+                }
+            }
+        }
+    }
+
     compileOptions {
         sourceCompatibility = ProjectConfig.javaVersion
         targetCompatibility = ProjectConfig.javaVersion

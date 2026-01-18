@@ -6,8 +6,9 @@ agp = "8.11.0"
 coil = "2.7.0"
 kotlin = "2.1.20"
 coreKtx = "1.16.0"
-junit = "4.13.2"
+
 junitVersion = "1.2.1"
+ktlint = "13.1.0"
 kotlinxCollectionsImmutable = "0.3.7"
 ktor = "2.3.11"
 kotlinxSerialization = "1.6.3"
@@ -25,17 +26,20 @@ material = "1.12.0"
 uiTooling = "1.8.2"
 kotlinxCoroutinesCore = "1.10.2"
 str = "1.0.15"
-mockk = "1.13.11"
 kotlinxCoroutinesTest = "1.8.1"
-turbine = "1.1.0"
 jetbrainsKotlinJvmVersion = "2.1.20"
+junit-bom = "5.13.4"
+mockk = "1.14.5"
+turbine = "1.2.1"
+junit = "4.13.2"
+truth="1.4.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3Exoplayer" }
 androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3Exoplayer" }
 androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3Exoplayer" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
+
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -67,11 +71,28 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 alterjuice-str-core = { module = "com.github.AlterJuice.android-utils:str-core", version.ref = "str" }
 alterjuice-str-android = { module = "com.github.AlterJuice.android-utils:str-android", version.ref = "str" }
 
+junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit-bom" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+mockk-core = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api" }
+
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 coil-compose-base = { module = "io.coil-kt:coil-compose-base", version.ref = "coil" }
 test-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 test-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+
+[bundles]
+testing-junit = [
+    "junit",
+    "junit-jupiter",
+    "junit-jupiter-engine",
+    "junit-platform-launcher",
+    "junit-jupiter-api"
+]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -81,5 +102,6 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 google-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
 ksp = { id = "com.google.devtools.ksp", version = "2.1.20-1.0.32" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvmVersion" }
 

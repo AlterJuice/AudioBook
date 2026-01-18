@@ -9,7 +9,22 @@ plugins {
 android {
     namespace = "com.alterjuice.test.audiobook"
     compileSdk = ProjectConfig.compileSdk
+    lint {
+        ignoreTestSources = true
+        // Generate plain text and HTML reports for CI artifacts
+        textReport = true
+        htmlReport = true
+        htmlOutput = file("lint-report.html")
 
+        // Ensure all dependencies are also checked for issues
+        checkDependencies = true
+
+        // Promote MissingTranslation from a warning to a fatal error
+        // fatal.addAll(listOf("MissingTranslation", "MissingSealedEntries"))
+
+        // Fail the build if any issue with severity 'error' or 'fatal' is found
+        abortOnError = true
+    }
     defaultConfig {
         applicationId = "com.alterjuice.test.audiobook"
         minSdk = ProjectConfig.minSdk
@@ -87,6 +102,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
+    implementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

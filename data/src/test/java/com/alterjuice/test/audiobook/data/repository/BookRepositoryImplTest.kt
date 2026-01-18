@@ -8,7 +8,7 @@ import io.mockk.mockk
 import junit.framework.TestCase.assertTrue
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.test.runTest
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class BookRepositoryImplTest {

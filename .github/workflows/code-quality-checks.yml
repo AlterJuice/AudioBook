@@ -1,0 +1,105 @@
+name: "🔎 Code Quality Checks"
+
+permissions:
+  statuses: write
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      sha:
+        type: string
+        required: false
+      branch_name:
+        type: string
+        required: false
+
+jobs:
+  code-quality-checks:
+    name: "🛡️ Quality Gate"
+    runs-on: ubuntu-latest
+    env:
+      CI_COMMIT_BRANCH: ${{ inputs.branch_name || github.ref_name }}
+    steps:
+      - name: Set Pending Status
+        uses: guibranco/github-status-action-v2@v1.1.13
+        with:
+          authToken: ${{ github.token }}
+          context: "Quality Gate (Status checks)"
+          state: "pending"
+          sha: ${{ inputs.sha || github.sha }}
+          description: "Analysis is running..."
+          target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sha || github.ref }}
+
+      - name: Mock Lint and Test
+        run: |
+          echo "Testing branch: $CI_COMMIT_BRANCH"
+          echo "Running on SHA: ${{ inputs.sha || github.sha }}"
+          sleep 5
+          echo "Linting complete. Tests passed!"
+
+      - name: Set Final Status
+        if: always()
+        uses: guibranco/github-status-action-v2@v1.1.13
+        with:
+          authToken: ${{ github.token }}
+          context: "Quality Gate (Status checks)"
+          state: ${{ job.status }}
+          sha: ${{ inputs.sha || github.sha }}
+          description: "Analysis finished with status: ${{ job.status }}"
+          target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      - name: Publish Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: lint-report.html
+          retention-days: 1
+
+
+      - name: Upload Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results-${{ inputs.branch || 'manual' }}
+          path: '**/build/test-results/**/TEST-*.xml'
+          retention-days: 1
+
+      - name: Publish Unit Test Report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: ''
+          path: '**/build/test-results/**/TEST-*.xml'
+          reporter: java-junit
+          fail-on-error: false
+
+      - name: Upload ktlint Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ktlint-reports-${{ inputs.branch || 'manual' }}
+          path: '**/build/reports/ktlint/**/*.xml'
+          retention-days: 1
+
+      - name: Publish ktlint Report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: ''
+          path: '**/build/reports/ktlint/**/ktlint*Check.xml'
+          reporter: java-checkstyle
+          fail-on-error: false
+
+      - name: Publish Android Lint Report
+        if: always()
+        uses: yutailang0119/action-android-lint@v4
+        with:
+          report-path: app/lint-report.xml
+

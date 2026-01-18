@@ -51,7 +51,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.1")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.1")
-    debugImplementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.ui.tooling.preview)
 
     // Str lib
     implementation(libs.alterjuice.str.core)
