@@ -25,7 +25,7 @@ permissions:
   contents: read        # Для чекауту коду
   deployments: write    # КРИТИЧНО: дозволяє створювати GitHub Deployments (секція Environments у ПР)
   pull-requests: write  # Якщо Fastlane або скрипти мають писати посилання на артефакти в коментарі
-  statuses: write       # Щоб оновити статус джоби (якщо деплой теж є статус-чеком)
+
 
 jobs:
   build-and-deploy:
