@@ -72,14 +72,14 @@ jobs:
           path: '**/build/test-results/**/TEST-*.xml'
           retention-days: 1
 
-#      - name: Publish Unit Test Report
-#        if: always()
-#        uses: dorny/test-reporter@v1
-#        with:
-#          name: 'Test check'
-#          path: '**/build/test-results/**/TEST-*.xml'
-#          reporter: java-junit
-#          fail-on-error: false
+      - name: Publish Unit Test Report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: 'Unit Test Report'
+          path: '**/build/test-results/**/TEST-*.xml'
+          reporter: java-junit
+          fail-on-error: false
 
       - name: Upload ktlint Reports
         if: always()
@@ -93,7 +93,7 @@ jobs:
         if: always()
         uses: dorny/test-reporter@v1
         with:
-          name: ''
+          name: 'ktlint Report'
           path: '**/build/reports/ktlint/**/ktlint*Check.xml'
           reporter: java-checkstyle
           fail-on-error: false
