@@ -37,12 +37,21 @@ jobs:
           submodules: 'recursive'
           ref: ${{ inputs.sha || github.ref }}
 
-      - name: Mock Lint and Test
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run Gradle Lint, Tests, and ktlint Checks
         run: |
           echo "Testing branch: $CI_COMMIT_BRANCH"
           echo "Running on SHA: ${{ inputs.sha || github.sha }}"
-          sleep 5
-          echo "Linting complete. Tests passed!"
+          ./gradlew --continue --parallel lintDebug testDebugUnitTest ktlintCheck --stacktrace
 
       - name: Set Final Status
         if: always()
