@@ -89,14 +89,14 @@ jobs:
           path: '**/build/reports/ktlint/**/*.xml'
           retention-days: 1
 
-      - name: Publish ktlint Report
-        if: always()
-        uses: dorny/test-reporter@v1
-        with:
-          name: 'ktlint Report'
-          path: '**/build/reports/ktlint/**/ktlint*Check.xml'
-          reporter: java-checkstyle
-          fail-on-error: false
+#      - name: Publish ktlint Report
+#        if: always()
+#        uses: dorny/test-reporter@v1
+#        with:
+#          name: 'ktlint Report'
+#          path: '**/build/reports/ktlint/**/ktlint*Check.xml'
+#          reporter: java-checkstyle
+#          fail-on-error: false
 
       - name: Publish Android Lint Report
         if: always()
