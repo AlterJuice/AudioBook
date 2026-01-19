@@ -2,6 +2,8 @@ name: "🔎 Code Quality Checks"
 
 permissions:
   statuses: write
+  checks: write
+  pull-requests: write
 
 on:
   workflow_dispatch:
