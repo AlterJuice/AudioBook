@@ -2,8 +2,6 @@ name: "🔎 Code Quality Checks"
 
 permissions:
   statuses: write
-  checks: write
-  pull-requests: write
 
 on:
   workflow_dispatch:
@@ -55,6 +53,78 @@ jobs:
           echo "Running on SHA: ${{ inputs.sha || github.sha }}"
           ./gradlew --continue lintDebug test ktlintCheck --stacktrace
 
+      - name: Generate Test Summary
+        if: always()
+        run: |
+          echo "# 🔎 Code Quality Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** $CI_COMMIT_BRANCH" >> $GITHUB_STEP_SUMMARY
+          echo "**SHA:** ${{ inputs.sha || github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Test Results Summary
+          echo "## 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Count test results
+          TOTAL_TESTS=0
+          PASSED_TESTS=0
+          FAILED_TESTS=0
+          SKIPPED_TESTS=0
+
+          for file in $(find . -path "*/build/test-results/*/TEST-*.xml" 2>/dev/null); do
+            if [ -f "$file" ]; then
+              TESTS=$(grep -oP 'tests="\K[0-9]+' "$file" | head -1 || echo "0")
+              FAILURES=$(grep -oP 'failures="\K[0-9]+' "$file" | head -1 || echo "0")
+              SKIPPED=$(grep -oP 'skipped="\K[0-9]+' "$file" | head -1 || echo "0")
+
+              TOTAL_TESTS=$((TOTAL_TESTS + TESTS))
+              FAILED_TESTS=$((FAILED_TESTS + FAILURES))
+              SKIPPED_TESTS=$((SKIPPED_TESTS + SKIPPED))
+            fi
+          done
+
+          PASSED_TESTS=$((TOTAL_TESTS - FAILED_TESTS - SKIPPED_TESTS))
+
+          if [ $TOTAL_TESTS -eq 0 ]; then
+            echo "⚠️ No tests found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Status | Count |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| ✅ Passed | $PASSED_TESTS |" >> $GITHUB_STEP_SUMMARY
+            echo "| ❌ Failed | $FAILED_TESTS |" >> $GITHUB_STEP_SUMMARY
+            echo "| ⏭️ Skipped | $SKIPPED_TESTS |" >> $GITHUB_STEP_SUMMARY
+            echo "| **📊 Total** | **$TOTAL_TESTS** |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Lint Results Summary
+          echo "## 🔍 Lint Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "app/lint-report.xml" ]; then
+            LINT_ERRORS=$(grep -oP 'severity="Error"' app/lint-report.xml | wc -l || echo "0")
+            LINT_WARNINGS=$(grep -oP 'severity="Warning"' app/lint-report.xml | wc -l || echo "0")
+            LINT_INFO=$(grep -oP 'severity="Information"' app/lint-report.xml | wc -l || echo "0")
+
+            echo "| Severity | Count |" >> $GITHUB_STEP_SUMMARY
+            echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| 🔴 Errors | $LINT_ERRORS |" >> $GITHUB_STEP_SUMMARY
+            echo "| ⚠️ Warnings | $LINT_WARNINGS |" >> $GITHUB_STEP_SUMMARY
+            echo "| ℹ️ Info | $LINT_INFO |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Lint report not found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Download detailed reports from the artifacts section below:" >> $GITHUB_STEP_SUMMARY
+          echo "- 📄 **lint-reports-html** - Android Lint HTML reports" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **unit-test-reports-html** - Unit test HTML reports" >> $GITHUB_STEP_SUMMARY
+          echo "- 📋 **ktlint-reports-html** - ktlint code style reports" >> $GITHUB_STEP_SUMMARY
+
       - name: Set Final Status
         if: always()
         uses: guibranco/github-status-action-v2@v1.1.13
@@ -66,52 +136,54 @@ jobs:
           description: "Analysis finished with status: ${{ job.status }}"
           target_url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-      - name: Publish Artifact
+      - name: Upload Lint Reports (HTML)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lint-report
-          path: app/lint-report.html
-          retention-days: 1
+          name: lint-reports-html
+          path: |
+            app/lint-report.html
+            **/build/reports/lint-results-*.html
+          retention-days: 7
 
-
-      - name: Upload Unit Test Results
+      - name: Upload Lint Reports (XML)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-results-${{ inputs.branch || 'manual' }}
+          name: lint-reports-xml
+          path: app/lint-report.xml
+          retention-days: 7
+
+
+      - name: Upload Unit Test Results (XML)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results-xml
           path: '**/build/test-results/**/TEST-*.xml'
-          retention-days: 1
+          retention-days: 7
 
-      - name: Publish Unit Test Report
-        if: always()
-        uses: dorny/test-reporter@v1
-        with:
-          name: 'Unit Test Report'
-          path: '**/build/test-results/**/TEST-*.xml'
-          reporter: java-junit
-          fail-on-error: false
-
-      - name: Upload ktlint Reports
+      - name: Upload Unit Test Reports (HTML)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ktlint-reports-${{ inputs.branch || 'manual' }}
+          name: unit-test-reports-html
+          path: '**/build/reports/tests/**'
+          retention-days: 7
+
+      - name: Upload ktlint Reports (XML)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ktlint-reports-xml
           path: '**/build/reports/ktlint/**/*.xml'
-          retention-days: 1
+          retention-days: 7
 
-#      - name: Publish ktlint Report
-#        if: always()
-#        uses: dorny/test-reporter@v1
-#        with:
-#          name: 'ktlint Report'
-#          path: '**/build/reports/ktlint/**/ktlint*Check.xml'
-#          reporter: java-checkstyle
-#          fail-on-error: false
-
-      - name: Publish Android Lint Report
+      - name: Upload ktlint Reports (HTML)
         if: always()
-        uses: yutailang0119/action-android-lint@v4
+        uses: actions/upload-artifact@v4
         with:
-          report-path: app/lint-report.xml
+          name: ktlint-reports-html
+          path: '**/build/reports/ktlint/**/*.html'
+          retention-days: 7
 
