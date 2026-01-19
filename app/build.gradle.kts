@@ -11,10 +11,12 @@ android {
     compileSdk = ProjectConfig.compileSdk
     lint {
         ignoreTestSources = true
-        // Generate plain text and HTML reports for CI artifacts
+        // Generate plain text, HTML, and XML reports for CI artifacts
         textReport = true
         htmlReport = true
         htmlOutput = file("lint-report.html")
+        xmlReport = true
+        xmlOutput = file("lint-report.xml")
 
         // Ensure all dependencies are also checked for issues
         checkDependencies = true

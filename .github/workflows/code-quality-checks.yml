@@ -51,7 +51,7 @@ jobs:
         run: |
           echo "Testing branch: $CI_COMMIT_BRANCH"
           echo "Running on SHA: ${{ inputs.sha || github.sha }}"
-          ./gradlew --continue --parallel lintDebug testDebugUnitTest ktlintCheck --stacktrace
+          ./gradlew --continue lintDebug test ktlintCheck --stacktrace
 
       - name: Set Final Status
         if: always()
