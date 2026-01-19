@@ -64,42 +64,49 @@ jobs:
           compare_to_earlier_commit: false
           check_run: false
 
-      - name: Generate Lint Summary
-        if: always()
-        run: |
-          echo "# 🔍 Android Lint Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+      - name: Publish Test Report
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always() # Запускати навіть якщо тести впали
+        with:
+          files: |
+            **/build/test-results/**/*.xml 
 
-          if [ -f "app/lint-report.xml" ]; then
-            LINT_ERRORS=$(grep -oP 'severity="Error"' app/lint-report.xml | wc -l || echo "0")
-            LINT_WARNINGS=$(grep -oP 'severity="Warning"' app/lint-report.xml | wc -l || echo "0")
-            LINT_INFO=$(grep -oP 'severity="Information"' app/lint-report.xml | wc -l || echo "0")
-
-            echo "| Severity | Count |" >> $GITHUB_STEP_SUMMARY
-            echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
-            echo "| 🔴 Errors | $LINT_ERRORS |" >> $GITHUB_STEP_SUMMARY
-            echo "| ⚠️ Warnings | $LINT_WARNINGS |" >> $GITHUB_STEP_SUMMARY
-            echo "| ℹ️ Info | $LINT_INFO |" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-
-            if [ $LINT_ERRORS -gt 0 ]; then
-              echo "### 🔴 Error Details" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              grep -A 3 'severity="Error"' app/lint-report.xml | head -20 >> $GITHUB_STEP_SUMMARY || true
-              echo '```' >> $GITHUB_STEP_SUMMARY
-            fi
-          else
-            echo "⚠️ Lint report not found" >> $GITHUB_STEP_SUMMARY
-          fi
-
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 📦 Download Full Reports" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Detailed HTML reports are available in the artifacts section:" >> $GITHUB_STEP_SUMMARY
-          echo "- 📄 **lint-reports-html** - Full Android Lint HTML reports" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **unit-test-reports-html** - Full unit test HTML reports" >> $GITHUB_STEP_SUMMARY
-          echo "- 📋 **ktlint-reports-html** - ktlint code style reports" >> $GITHUB_STEP_SUMMARY
+#      - name: Generate Lint Summary
+#        if: always()
+#        run: |
+#          echo "# 🔍 Android Lint Results" >> $GITHUB_STEP_SUMMARY
+#          echo "" >> $GITHUB_STEP_SUMMARY
+#
+#          if [ -f "app/lint-report.xml" ]; then
+#            LINT_ERRORS=$(grep -oP 'severity="Error"' app/lint-report.xml | wc -l || echo "0")
+#            LINT_WARNINGS=$(grep -oP 'severity="Warning"' app/lint-report.xml | wc -l || echo "0")
+#            LINT_INFO=$(grep -oP 'severity="Information"' app/lint-report.xml | wc -l || echo "0")
+#
+#            echo "| Severity | Count |" >> $GITHUB_STEP_SUMMARY
+#            echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+#            echo "| 🔴 Errors | $LINT_ERRORS |" >> $GITHUB_STEP_SUMMARY
+#            echo "| ⚠️ Warnings | $LINT_WARNINGS |" >> $GITHUB_STEP_SUMMARY
+#            echo "| ℹ️ Info | $LINT_INFO |" >> $GITHUB_STEP_SUMMARY
+#            echo "" >> $GITHUB_STEP_SUMMARY
+#
+#            if [ $LINT_ERRORS -gt 0 ]; then
+#              echo "### 🔴 Error Details" >> $GITHUB_STEP_SUMMARY
+#              echo "" >> $GITHUB_STEP_SUMMARY
+#              echo '```' >> $GITHUB_STEP_SUMMARY
+#              grep -A 3 'severity="Error"' app/lint-report.xml | head -20 >> $GITHUB_STEP_SUMMARY || true
+#              echo '```' >> $GITHUB_STEP_SUMMARY
+#            fi
+#          else
+#            echo "⚠️ Lint report not found" >> $GITHUB_STEP_SUMMARY
+#          fi
+#
+#          echo "" >> $GITHUB_STEP_SUMMARY
+#          echo "## 📦 Download Full Reports" >> $GITHUB_STEP_SUMMARY
+#          echo "" >> $GITHUB_STEP_SUMMARY
+#          echo "Detailed HTML reports are available in the artifacts section:" >> $GITHUB_STEP_SUMMARY
+#          echo "- 📄 **lint-reports-html** - Full Android Lint HTML reports" >> $GITHUB_STEP_SUMMARY
+#          echo "- ✅ **unit-test-reports-html** - Full unit test HTML reports" >> $GITHUB_STEP_SUMMARY
+#          echo "- 📋 **ktlint-reports-html** - ktlint code style reports" >> $GITHUB_STEP_SUMMARY
 
       - name: Set Final Status
         if: always()
