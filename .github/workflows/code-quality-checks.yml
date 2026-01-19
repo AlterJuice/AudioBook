@@ -53,23 +53,25 @@ jobs:
           echo "Running on SHA: ${{ inputs.sha || github.sha }}"
           ./gradlew --continue lintDebug test ktlintCheck --stacktrace
 
-      - name: Publish Unit Test Results Summary
+      - name: Test Summary
+        uses: test-summary/action@v2
+        with:
+          paths: "**/build/test-results/test/TEST-*.xml"
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        with:
-          files: '**/build/test-results/**/TEST-*.xml'
-          check_name: 'Unit Test Results'
-          comment_mode: off
-          job_summary: true
-          compare_to_earlier_commit: false
-          check_run: false
 
-      - name: Publish Test Report
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always() # Запускати навіть якщо тести впали
-        with:
-          files: |
-            **/build/test-results/**/*.xml 
+#      - name: Publish Unit Test Results Summary
+#        if: always()
+#        uses: EnricoMi/publish-unit-test-result-action@v2
+#        with:
+#          files: '**/build/test-results/**/TEST-*.xml'
+#          check_name: 'Unit Test Results'
+#          comment_mode: off
+#          job_summary: true
+#          compare_to_earlier_commit: false
+#          check_run: false
+
+
+
 
 #      - name: Generate Lint Summary
 #        if: always()
