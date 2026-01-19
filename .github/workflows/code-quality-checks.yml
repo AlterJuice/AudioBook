@@ -76,7 +76,7 @@ jobs:
         if: always()
         uses: dorny/test-reporter@v1
         with:
-          name: ''
+          name: 'Test check'
           path: '**/build/test-results/**/TEST-*.xml'
           reporter: java-junit
           fail-on-error: false
