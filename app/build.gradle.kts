@@ -14,10 +14,10 @@ android {
         // Generate plain text, HTML, and XML reports for CI artifacts
 
         xmlReport = true
-        xmlOutput = file("${layout.buildDirectory}/reports/lint-results-aggregated.xml")
+        xmlOutput = file("build/reports/lint-results-aggregated.xml")
 
         htmlReport = true
-        htmlOutput = file("${layout.buildDirectory}/reports/lint-results-aggregated.html")
+        htmlOutput = file("build/reports/lint-results-aggregated.html")
 
 
         // Ensure all dependencies are also checked for issues
