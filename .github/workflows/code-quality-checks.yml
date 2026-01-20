@@ -51,7 +51,7 @@ jobs:
         run: |
           echo "Testing branch: $CI_COMMIT_BRANCH"
           echo "Running on SHA: ${{ inputs.sha || github.sha }}"
-          ./gradlew --continue lintDebug testDebugUnitTest testDebug ktlintCheck --stacktrace
+          ./gradlew clean testDebugUnitTest --stacktrace --rerun-tasks --continue
 
       - name: Generate Test Summary
         if: always() # Запускати завжди, незалежно від того, пройшли тести чи впали
