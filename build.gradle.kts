@@ -15,7 +15,7 @@ plugins {
 subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint") // Version should be inherited from parent
 
-    tasks.withType<Test> {
+    tasks.withType<Test>().configureEach {
         // 1. Use the JUnit 5 engine
         useJUnitPlatform()
 
