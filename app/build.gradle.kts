@@ -12,11 +12,13 @@ android {
     lint {
         ignoreTestSources = true
         // Generate plain text, HTML, and XML reports for CI artifacts
-        textReport = true
-        htmlReport = true
-        htmlOutput = file("lint-report.html")
+
         xmlReport = true
-        xmlOutput = file("lint-report.xml")
+        xmlOutput = file("${layout.buildDirectory}/reports/lint-results-aggregated.xml")
+
+        htmlReport = true
+        htmlOutput = file("${layout.buildDirectory}/reports/lint-results-aggregated.html")
+
 
         // Ensure all dependencies are also checked for issues
         checkDependencies = true

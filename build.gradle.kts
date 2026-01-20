@@ -46,3 +46,17 @@ subprojects {
     }
 
 }
+
+tasks.register("testDebugAllUnitTest") {
+    group = "verification"
+    description =
+        "Runs unit tests for pure Kotlin modules and Debug unit tests for Android modules."
+
+    val testTasks = subprojects.flatMap { proj ->
+        proj.tasks.matching {
+            it.name == "testDebugUnitTest" ||
+                    (it.name == "test" && !proj.plugins.hasPlugin("com.android.base"))
+        }
+    }
+    dependsOn(testTasks)
+}

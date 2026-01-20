@@ -1,8 +1,8 @@
 import glob
 import os
-import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from typing import List, Dict, Tuple
+from xml.etree import ElementTree
 
 
 @dataclass
@@ -38,8 +38,8 @@ class ModuleReport:
 
 
 class TestReporter:
-    def __init__(self, search_pattern: str):
-        self.search_pattern = search_pattern
+    def __init__(self, paths: list[str]):
+        self.paths = paths
         self.modules: Dict[str, ModuleReport] = {}
 
     def _extract_module_name(self, file_path: str) -> str:
@@ -51,13 +51,12 @@ class TestReporter:
             return "root"
 
     def parse(self):
-        files = glob.glob(self.search_pattern, recursive=True)
-        for f in files:
-            module_name = self._extract_module_name(f)
+        for path in self.paths:
+            module_name = self._extract_module_name(path)
             if module_name not in self.modules:
                 self.modules[module_name] = ModuleReport(module_name)
 
-            tree = ET.parse(f)
+            tree = ElementTree.parse(path)
             for testcase in tree.getroot().findall('testcase'):
                 # Get raw class name without packages
                 full_class = testcase.attrib.get('classname', 'Unknown')
@@ -122,6 +121,20 @@ class TestReporter:
 
 
 if __name__ == "__main__":
-    reporter = TestReporter('**/build/test-results/testDebugUnitTest/TEST-*.xml')
+    pure_kotlin_module_tests = '**/build/test-results/test/TEST-*.xml'
+    android_module_tests = '**/build/test-results/testDebugUnitTest/TEST-*.xml'
+
+    patterns = [
+        pure_kotlin_module_tests,
+        android_module_tests,
+    ]
+
+    found_files = list()
+    for pattern in patterns:
+        found_files.extend(glob.glob(pattern, recursive=True))
+
+    unique_files = list(set(found_files))
+
+    reporter = TestReporter(unique_files)
     reporter.parse()
     print(reporter.generate_summary())

@@ -14,22 +14,22 @@ kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(ProjectConfig.jvmVersion)
     }
-}
-tasks.withType<Test>() {
-    useJUnitPlatform()
+    tasks.test {
+        useJUnitPlatform()
 
-    // Apply your reporting and logging here
-    testLogging {
-        events(
-            TestLogEvent.PASSED,
-            TestLogEvent.SKIPPED,
-            TestLogEvent.FAILED,
-        )
-    }
+        // Apply your reporting and logging here
+        testLogging {
+            events(
+                TestLogEvent.PASSED,
+                TestLogEvent.SKIPPED,
+                TestLogEvent.FAILED,
+            )
+        }
 
-    reports {
-        junitXml.required.set(true)
-        html.required.set(true)
+        reports {
+            junitXml.required.set(true)
+            html.required.set(true)
+        }
     }
 }
 
